@@ -17,7 +17,7 @@ jobs:
           distribution: "adopt"
           
       - name: Download base APK
-        run: chmod +x dl-ytb.sh -r
+        run: chmod +x dl-ytb.sh
 
       - name: Download base APK
-        run: ./dl-ytb.sh
+        run: ./dl-ytb.sh -r
