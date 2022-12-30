@@ -56,7 +56,7 @@ youtube=no
 music=no
 twitter=no
 reddit=no
-tiktok=yes
+tiktok=no
 
 while getopts mr flag
 do
