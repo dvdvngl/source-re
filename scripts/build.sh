@@ -15,6 +15,9 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
+Likk="$GITHUB_WORKSPACE"
+apksign () { java -jar apksigner.jar sign --cert "testkey.x509.pem" --key "testkey.pk8" --out "$2" "$1"; }
+
 out() {
 	# print a message
 	printf '%b\n' "$@"
@@ -256,7 +259,7 @@ for apk in "${!apks[@]}"; do
     fi
 done
 
-mkdir -p build
+mkdir -p build upload
 
 # All patches will be included by default, you can exclude patches by appending -e patch-name to exclude said patch.
 # Example: -e microg-support
@@ -276,8 +279,9 @@ if [ "$youtube" = 'yes' ]; then
     if [ -f "youtube.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
-                                -a youtube.apk -o build/ReEx-${youtubeVersion}-nonroot.apk
-        echo "YouTube ReVanced build finished"
+                                -a youtube.apk -o build/revanced-nonroot.apk
+        apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot.apk"
+	echo "YouTube ReVanced build finished"
     else
         echo "Cannot find YouTube APK, skipping build"
     fi
