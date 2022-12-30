@@ -266,7 +266,7 @@ mkdir -p build
 
 common_included_patches="-i predictive-back-gesture"
 
-if [ "$revanced" = 'yes' ]; then
+if [ "$youtube" = 'yes' ]; then
     echo "************************************"
     echo "*    Building YouTube ReVanced     *"
     echo "************************************"
