@@ -156,10 +156,10 @@ dl_ytapkm() {
 # Cleanup
 find $CURDIR -type f -name *.apkm -exec rm -rf {} \;
 find $CURDIR -type f -name *.zip -exec rm -rf {} \;
-rm -rf $YTMODULEPATH/youtube && mkdir -p $YTMODULEPATH/yt
+rm -rf $Likk/youtube && mkdir -p $Likk/yt
 
 # Download Youtube
-dl_ytapkm $YTVERSION $Likk/youtube.apkm
+dl_ytapkm $youtubeVersion $Likk/youtube.apkm
 
 sudo apt-get install p7zip-full -y
 echo Split youtube_arm64_v8a.apk
