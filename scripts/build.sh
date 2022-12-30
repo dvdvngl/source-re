@@ -78,7 +78,6 @@ declare -A apks
 # properly right now if these do end up getting fixed in the future and if there are people needing them I'll look into re-enabling them.
 
 apks["youtube.apk"]=dl_yt
-apks["youtube.apkm"]=dl_ytapkm
 apks["music-arm.apk"]=dl_ytm_arm
 apks["music-arm64.apk"]=dl_ytm_arm64
 # apks["music-x86.apk"]=dl_ytm_x86
