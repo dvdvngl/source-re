@@ -158,6 +158,8 @@ find $CURDIR -type f -name *.apkm -exec rm -rf {} \;
 find $CURDIR -type f -name *.zip -exec rm -rf {} \;
 rm -rf $Likk/youtube && mkdir -p $Likk/yt
 
+dl_ytapkm $youtubeVersion yt/youtube.apkm
+
 sudo apt-get install p7zip-full -y
 echo Split youtube_arm64_v8a.apk
 7z e yt/youtube.apkm -oyt-arm64_v8a
