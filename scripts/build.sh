@@ -159,7 +159,7 @@ find $CURDIR -type f -name *.zip -exec rm -rf {} \;
 rm -rf $Likk/youtube && mkdir -p $Likk/yt
 
 # Download Youtube
-dl_ytapkm $youtubeVersion $Likk/youtube.apkm
+dl_ytapkm $youtubeVersion $Likk/yt/youtube.apkm
 
 sudo apt-get install p7zip-full -y
 echo Split youtube_arm64_v8a.apk
