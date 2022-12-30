@@ -304,20 +304,24 @@ common_included_patches="-i predictive-back-gesture"
 
 if [ "$youtube" = 'yes' ]; then
     echo "************************************"
-    echo "*    Building YouTube ReVanced     *"
+    echo "*     Building ReVanced      *"
     echo "************************************"
 
     yt_excluded_patches="-e background-play -e codecs-unlock -e compact-header -e custom-music-branding -e exclusive-audio-playback -e hide-get-premium -e minimized-playback-music -e music-microg-support -e music-video-ads -e premium-heading -e tasteBuilder-remover -e upgrade-button-remover"
     yt_included_patches="-i theme"
 
+    echo "=== Building all APK ==="
     if [ -f "youtube.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
                                 -a youtube.apk -o build/revanced-nonroot.apk
-        apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot.apk"
+        apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-all.apk"
 	echo "ReEx-${youtubeVersion}-nonroot build finished"
     else
-        echo "Cannot find YouTube APK, skipping build"
+        echo "Cannot find YouTube arm APK, skipping build"
+    fi
+
+    echo "=== Building arm64 APK === "
     if [ -f "youtube_arm64_v8a.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
@@ -325,8 +329,10 @@ if [ "$youtube" = 'yes' ]; then
         apksign "$Likk/build/revanced_arm64_v8a-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}_arm64_v8a-nonroot.apk"
 	echo "ReEx-${youtubeVersion}_arm64_v8a build finished"
     else
-        echo "Cannot find YouTube APK, skipping build"
+        echo "Cannot find YouTube arm64 APK, skipping build"
     fi
+
+    echo "=== Building arm APK ==="
     if [ -f "youtube_armeabi_v7a.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
@@ -334,10 +340,10 @@ if [ "$youtube" = 'yes' ]; then
         apksign "$Likk/build/revanced_armeabi_v7a-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}_armeabi_v7a-nonroot.apk"
 	echo "ReEx-${youtubeVersion}_armeabi_v7a build finished"
     else
-        echo "Cannot find YouTube APK, skipping build"
+        echo "Cannot find YouTube x86 APK, skipping build"
     fi
 else
-    echo "Skipping YouTube Revanced build"
+    echo "Skipping ReVanced build"
 fi
 
 if [ "$music" = 'yes' ]; then
