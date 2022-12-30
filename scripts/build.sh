@@ -145,7 +145,7 @@ dl_yt() {
 # Download YouTube apks
 dl_ytapkm() {
     rm -rf $2
-    echo "Downloading YouTube $1"
+    echo "Downloading YouTube apks $1"
     url="https://www.apkmirror.com/apk/google-inc/youtube/youtube-${1//./-}-release/"
     url="$url$(req "$url" - | grep Variant -A50 | grep ">BUNDLE<" -A2 | grep android-apk-download | sed "s#.*-release/##g;s#/\#.*##g")"
     url="https://www.apkmirror.com$(req "$url" - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
