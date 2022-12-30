@@ -78,6 +78,7 @@ declare -A apks
 # properly right now if these do end up getting fixed in the future and if there are people needing them I'll look into re-enabling them.
 
 apks["youtube.apk"]=dl_yt
+apks["youtube.apkm"]=dl_ytapkm
 apks["music-arm.apk"]=dl_ytm_arm
 apks["music-arm64.apk"]=dl_ytm_arm64
 # apks["music-x86.apk"]=dl_ytm_x86
@@ -140,6 +141,41 @@ dl_yt() {
 		echo "Skipping YouTube..."
 	fi
 }
+
+# Download YouTube apks
+dl_ytapkm() {
+    rm -rf $2
+    echo "Downloading YouTube $1"
+    url="https://www.apkmirror.com/apk/google-inc/youtube/youtube-${1//./-}-release/"
+    url="$url$(req "$url" - | grep Variant -A50 | grep ">BUNDLE<" -A2 | grep android-apk-download | sed "s#.*-release/##g;s#/\#.*##g")"
+    url="https://www.apkmirror.com$(req "$url" - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
+    url="https://www.apkmirror.com$(req "$url" - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
+    req "$url" "$2"
+}
+
+# Cleanup
+find $CURDIR -type f -name *.apkm -exec rm -rf {} \;
+find $CURDIR -type f -name *.zip -exec rm -rf {} \;
+rm -rf $YTMODULEPATH/youtube && mkdir -p $YTMODULEPATH/yt
+
+# Download Youtube
+dl_yt $YTVERSION $YTMODULEPATH/yt/youtube.apkm
+
+sudo apt-get install p7zip-full -y
+echo Split youtube_arm64_v8a.apk
+7z e yt/youtube.apkm -oyt-arm64_v8a
+mkdir arm64
+mv yt-arm64_v8a/base.apk  yt-arm64_v8a/split_config.arm64_v8a.apk  yt-arm64_v8a/split_config.x*dpi.apk  arm64
+java -jar apks.jar m -i arm64 -o youtube_arm64_v8a.apk
+echo Split youtube_armeabi_v7a.apk
+7z e yt/youtube.apkm -oyt-armeabi_v7a
+mkdir arm
+mv yt-armeabi_v7a/base.apk  yt-armeabi_v7a/split_config.armeabi_v7a.apk  yt-armeabi_v7a/split_config.x*dpi.apk  arm
+java -jar apks.jar m -i arm -o youtube_armeabi_v7a.apk
+rm -r yt-arm64_v8a yt-armeabi_v7a yt arm64 arm
+echo done
+
+
 
 # Download YouTube Music
 dl_ytm_arm() {
