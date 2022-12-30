@@ -39,9 +39,9 @@ export magiskYouTube="v17.33.42"
 # Artifacts associative array aka dictionary
 declare -A artifacts
 
-artifacts["revanced-cli.jar"]="revanced/revanced-cli revanced-cli .jar"
-artifacts["revanced-integrations.apk"]="revanced/revanced-integrations app-release-unsigned .apk"
-artifacts["revanced-patches.jar"]="Lyceris-chan/revanced-patches revanced-patches .jar"
+artifacts["revanced-cli.jar"]="inotia00/revanced-cli revanced-cli .jar"
+artifacts["revanced-integrations.apk"]="inotia00/revanced-integrations app-release-unsigned .apk"
+artifacts["revanced-patches.jar"]="inotia00/revanced-patches revanced-patches .jar"
 
 get_artifact_download_url () {
     # Usage: get_download_url <repo_name> <artifact_name> <file_type>
@@ -64,7 +64,7 @@ done
 
 
 
-youtubeVersion="17-33-42"
+youtubeVersion="17.49.37"
 musicVersion="5-24-50"
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
