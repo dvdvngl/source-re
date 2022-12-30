@@ -424,7 +424,7 @@ echo "Building Tiktok APK"
 echo "************************************"
 if [ -f "tiktok.apk" ]
 then
-    java -jar revanced-cli.jar -b revanced-patches.jar \
+    java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                -a tiktok.apk -o upload/tiktok_${tiktokVersion}.apk
 else
    echo "Cannot find Reddit APK, skipping build"
