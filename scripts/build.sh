@@ -1,5 +1,14 @@
 #!/bin/bash
-
+while getopts krtym flag
+do
+    case "${flag}" in
+        m) music=yes;;
+        y) youtube=yes;;
+        t) twitter=yes;;
+        r) reddit=yes;;
+        k) tiktok=yes;;
+    esac
+done
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
@@ -52,25 +61,10 @@ done
 
 # Download the following apk's from APKmirror
 
-youtube=no
-music=no
-twitter=no
-reddit=no
-tiktok=no
-
-while getopts mr flag
-do
-    case "${flag}" in
-        m) music=yes;;
-        y) youtube=yes;;
-        t) twitter=yes;;
-        r) reddit=yes;;
-        k) tiktok=yes;;
-    esac
-done
 
 
-youtubeVersion="$(java -jar revanced-cli.jar -a revanced-integrations.apk -b revanced-patches.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
+
+youtubeVersion="17-33-42"
 musicVersion="5-24-50"
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
