@@ -315,7 +315,24 @@ if [ "$youtube" = 'yes' ]; then
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
                                 -a youtube.apk -o build/revanced-nonroot.apk
         apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot.apk"
-	echo "YouTube ReVanced build finished"
+	echo "ReEx-${youtubeVersion}-nonroot build finished"
+    else
+        echo "Cannot find YouTube APK, skipping build"
+    if [ -f "youtube_arm64_v8a.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $yt_excluded_patches $yt_included_patches $common_included_patches \
+                                -a youtube_arm64_v8a.apk -o build/revanced_arm64_v8a-nonroot.apk
+        apksign "$Likk/build/revanced_arm64_v8a-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}_arm64_v8a-nonroot.apk"
+	echo "ReEx-${youtubeVersion}_arm64_v8a build finished"
+    else
+        echo "Cannot find YouTube APK, skipping build"
+    fi
+    if [ -f "youtube_armeabi_v7a.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $yt_excluded_patches $yt_included_patches $common_included_patches \
+                                -a youtube_armeabi_v7a.apk -o build/revanced_armeabi_v7a-nonroot.apk
+        apksign "$Likk/build/revanced_armeabi_v7a-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}_armeabi_v7a-nonroot.apk"
+	echo "ReEx-${youtubeVersion}_armeabi_v7a build finished"
     else
         echo "Cannot find YouTube APK, skipping build"
     fi
