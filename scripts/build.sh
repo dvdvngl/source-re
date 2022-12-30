@@ -276,7 +276,7 @@ if [ "$youtube" = 'yes' ]; then
     if [ -f "youtube.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
-                                -a youtube.apk -o build/revanced-nonroot.apk
+                                -a youtube.apk -o build/ReEx-${youtubeVersion}-nonroot.apk
         echo "YouTube ReVanced build finished"
     else
         echo "Cannot find YouTube APK, skipping build"
