@@ -307,7 +307,7 @@ if [ "$youtube" = 'yes' ]; then
     echo "*     Building ReVanced      *"
     echo "************************************"
 
-    yt_excluded_patches="-e -e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name"
+    yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify"
     yt_included_patches="-i theme"
 
     echo "=== Building all APK ==="
