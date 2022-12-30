@@ -259,7 +259,7 @@ dl_tiktok() {
 	if [ "$tiktok" = 'yes' ]; then
 		echo "Downloading Tiktok..."
 
-		local base_apk="tiktok_${tiktokVersion}.apk"
+		local base_apk="tiktok.apk"
 		if [ ! -f "$base_apk" ]; then
 			declare -r dl_url=$(dl_apk "https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok/tik-tok-${tiktokVersion}-release/" \
 				"APK</span>[^@]*@\([^#]*\)" \
@@ -307,7 +307,7 @@ if [ "$youtube" = 'yes' ]; then
     echo "*     Building ReVanced      *"
     echo "************************************"
 
-    yt_excluded_patches="-e "
+    yt_excluded_patches="-e -e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name"
     yt_included_patches="-i theme"
 
     echo "=== Building all APK ==="
@@ -425,7 +425,7 @@ echo "************************************"
 if [ -f "tiktok.apk" ]
 then
     java -jar revanced-cli.jar -b revanced-patches.jar -r \
-                               -a tiktok.apk -o upload/reddit.apk
+                               -a tiktok.apk -o upload/tiktok_${tiktokVersion}.apk
 else
    echo "Cannot find Reddit APK, skipping build"
 fi
