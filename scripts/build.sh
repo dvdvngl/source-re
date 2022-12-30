@@ -264,81 +264,75 @@ mkdir -p build
 
 # All available patches can be found here: https://github.com/Lyceris-chan/revanced-patches
 
-echo "************************************"
-echo "Building YouTube APK"
-echo "************************************"
+common_included_patches="-i predictive-back-gesture"
 
-if [ -f "youtube.apk" ]
-then
-    echo "Building Root APK"
-    java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar --experimental \
-                               -e microg-support \
-                               -a youtube.apk -o build/revanced-root.apk
-    echo "Building Non-root APK"
-    java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar --experimental \
-                               -a youtube.apk -o build/revanced-nonroot.apk
+if [ "$revanced" = 'yes' ]; then
+    echo "************************************"
+    echo "*    Building YouTube ReVanced     *"
+    echo "************************************"
+
+    yt_excluded_patches="-e background-play -e codecs-unlock -e compact-header -e custom-music-branding -e exclusive-audio-playback -e hide-get-premium -e minimized-playback-music -e music-microg-support -e music-video-ads -e premium-heading -e tasteBuilder-remover -e upgrade-button-remover"
+    yt_included_patches="-i theme"
+
+    if [ -f "youtube.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $yt_excluded_patches $yt_included_patches $common_included_patches \
+                                -a youtube.apk -o build/revanced-nonroot.apk
+        echo "YouTube ReVanced build finished"
+    else
+        echo "Cannot find YouTube APK, skipping build"
+    fi
 else
-    echo "Cannot find YouTube APK, skipping build"
+    echo "Skipping YouTube Revanced build"
 fi
 
-echo "************************************"
-echo "Building YouTube Music APK"
-echo "************************************"
-if [ -f "music-arm.apk" ]
-then
-    echo "Building Non-root arm APK"
-    java -jar revanced-cli.jar -b revanced-patches.jar --experimental \
-                               -a music-arm.apk -o build/revanced-music-nonroot-arm-signed.apk
+if [ "$music" = 'yes' ]; then
+    echo "************************************"
+    echo "*     Building ReVanced Music      *"
+    echo "************************************"
 
-    echo "Building Root arm APK"
-    java -jar revanced-cli.jar -b revanced-patches.jar --experimental \
-                               -e music-microg-support \
-                               -a music-arm.apk -o build/revanced-music-root-arm-signed.apk
+    ytm_excluded_patches="-e always-autorepeat -e autorepeat-by-default -e client-spoof -e comments -e custom-branding -e custom-video-buffer -e custom-video-speed -e debugging -e disable-auto-captions -e disable-auto-player-popup-panels -e disable-create-button -e disable-fullscreen-panels -e disable-startup-shorts-player -e disable-zoom-haptics -e downloads -e enable-wide-searchbar -e general-ads -e hdr-auto-brightness -e hide-album-cards -e hide-artist-card -e hide-autoplay-button -e hide-captions-button -e hide-cast-button -e hide-create-button -e hide-crowdfunding-box -e hide-email-address -e hide-endscreen-cards -e hide-info-cards -e hide-my-mix -e hide-shorts-button -e hide-time-and-seekbar -e hide-video-buttons -e hide-watch-in-vr -e hide-watermark -e microg-support -e minimized-playback -e old-quality-layout -e open-links-directly -e premium-heading -e remember-video-quality -e remove-player-button-background -e return-youtube-dislike -e seekbar-tapping -e settings -e sponsorblock -e swipe-controls -e tablet-mini-player -e video-ads"
 
+    echo "=== Building arm APK ==="
+    if [ -f "music-arm.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $ytm_excluded_patches $common_included_patches \
+                                -a music-arm.apk -o build/revanced-music-nonroot-arm.apk
+        echo "ReVanced Music arm build finished"
+    else
+        echo "Cannot find YouTube Music arm APK, skipping build"
+    fi
+
+    echo "=== Building arm64 APK === "
+    if [ -f "music-arm64.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $ytm_excluded_patches \
+                                -a music-arm64.apk -o build/revanced-music-nonroot-arm64.apk
+        echo "ReVanced Music arm64 build finished"
+    else
+        echo "Cannot find YouTube Music arm64 APK, skipping build"
+    fi
+
+    echo "=== Building x86 APK ==="
+    if [ -f "music-x86.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $ytm_excluded_patches \
+                                -a music-x86.apk -o build/revanced-music-nonroot-x86.apk
+        echo "ReVanced Music x86 build finished"
+    else
+        echo "Cannot find YouTube Music x86 APK, skipping build"
+    fi
+
+    echo "=== Building x86_64 APK ==="
+    if [ -f "music-x86_64.apk" ]; then
+        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+                                $ytm_excluded_patches \
+                                -a music-x86_64.apk -o build/revanced-music-nonroot-x86_64.apk
+        echo "ReVanced Music x86_64 build finished"
+        echo "ReVanced Music build finished"
+    else
+        echo "Cannot find YouTube Music x86_64 APK, skipping build"
+    fi
 else
-   echo "Cannot find YouTube Music ARM APK, skipping build"
-fi
-
-if [ -f "music-arm64.apk" ]
-then
-    echo "Building Non-root arm64 APK"
-    java -jar revanced-cli.jar -b revanced-patches.jar --experimental \
-                               -a music-arm64.apk -o build/revanced-music-nonroot-arm64-signed.apk
-
-    echo "Building Root arm64 APK"
-    java -jar revanced-cli.jar -b revanced-patches.jar --experimental \
-                               -e music-microg-support \
-                               -a music-arm64.apk -o build/revanced-music-root-arm64-signed.apk
-else
-    echo "Cannot find YouTube Music ARM64 APK, skipping build"
-fi
-
-#    echo "Building Non-root x86 APK"
-#    java -jar revanced-cli.jar -b revanced-patches.jar --experimental \
-#                               -a music-x86.apk -o build/revanced-music-x86-nonroot.apk
-
-#    echo "Building Non-root x86_64 APK"
-#    java -jar revanced-cli.jar -b revanced-patches.jar --experimental \
-#                               -a music-x86_64.apk -o build/revanced-music-x86_64-nonroot.apk
-
-echo "************************************"
-echo "Building Twitter APK"
-echo "************************************"
-if [ -f "twitter.apk" ]
-then
-    java -jar revanced-cli.jar -b revanced-patches.jar \
-                               -a twitter.apk -o build/twitter.apk
-else
-   echo "Cannot find Twitter APK, skipping build"
-fi
-
-echo "************************************"
-echo "Building Reddit APK"
-echo "************************************"
-if [ -f "reddit.apk" ]
-then
-    java -jar revanced-cli.jar -b revanced-patches.jar -r \
-                               -a reddit.apk -o build/reddit.apk
-else
-   echo "Cannot find Reddit APK, skipping build"
+    echo "Skipping ReVanced Music build"
 fi
