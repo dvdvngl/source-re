@@ -70,7 +70,7 @@ youtubeVersion="$(java -jar revanced-cli.jar -a revanced-integrations.apk -b rev
 musicVersion="5-24-50"
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
-tiktokVersion="27.0.3"
+tiktokVersion="27.2.5"
 
 declare -A apks
 
