@@ -112,9 +112,20 @@ get_latest_version_info() {
 	out "${YELLOW}revanced_integrations : $revanced_integrations_version${NC}"
 }
 
+
 ## getting versions information
 get_latest_version_info
 
+if [ "$YTVERSION" == "Default" ];then
+YTVERSION="${youtubeVersion}"
+echo "VS=${youtubeVersion}" >> $GITHUB_ENV
+else
+echo "VS=$YTVERSION" >> $GITHUB_ENV
+fi
+
+echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
+echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
+echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
 
 # Wget download apk
 dl_apk() {
