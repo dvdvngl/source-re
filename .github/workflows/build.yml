@@ -15,7 +15,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-
+          
+      - name: Update the system
+        run: sudo apt install curl ripgrep
+       
       - name: Build APK
         run: ./scripts/build.sh -y -k
               
