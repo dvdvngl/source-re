@@ -17,6 +17,28 @@ NC='\033[0m'
 
 Likk="$GITHUB_WORKSPACE"
 apksign () { java -jar apksigner.jar sign --cert "testkey.x509.pem" --key "testkey.pk8" --out "$2" "$1"; }
+Xem () { curl -s -G -L -N -H "$User" --connect-timeout 20 "$1"; }
+
+
+notset() {
+	case $1 in '') return 0 ;; *) return 1 ;; esac
+}
+
+check_dep() {
+	if ! command -v "$1" >/dev/null; then
+		[ "$2" ] && out "${RED}$2${NC}"
+		return 1
+	else
+		return 0
+	fi
+}
+
+## grep
+if notset "$grep" && check_dep "rg"; then
+	grep="rg"
+elif notset "$grep"; then
+	grep="grep"
+fi
 
 out() {
 	# print a message
@@ -45,6 +67,9 @@ declare -A artifacts
 artifacts["revanced-cli.jar"]="revanced/revanced-cli revanced-cli .jar"
 artifacts["revanced-integrations.apk"]="revanced/revanced-integrations app-release-unsigned .apk"
 artifacts["revanced-patches.jar"]="revanced/revanced-patches revanced-patches .jar"
+artifacts["revanced-cli-ex.jar"]="inotia00/revanced-cli revanced-cli .jar"
+artifacts["revanced-integrations-ex.apk"]="inotia00/revanced-integrations app-release-unsigned .apk"
+artifacts["revanced-patches-ex.jar"]="inotia00/revanced-patches revanced-patches .jar"
 
 get_artifact_download_url () {
     # Usage: get_download_url <repo_name> <artifact_name> <file_type>
@@ -66,11 +91,15 @@ done
 
 
 
-youtubeVersion="$(java -jar revanced-cli.jar -a revanced-integrations.apk -b revanced-patches.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
+youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
 musicVersion="5-24-50"
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
-tiktokVersion="27.2.5"
+
+
+
+
+
 
 declare -A apks
 
@@ -96,24 +125,32 @@ WGET_HEADER="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/2010010
 req() { wget -nv -O "$2" --header="$WGET_HEADER" "$1"; }
 
 get_latest_version_info() {
-	out "${BLUE}getting latest versions info"
+	out "${BLUE}getting latest versions info${NC}"
 	## revanced cli
-	revanced_cli_version=$(curl -s -L https://github.com/revanced/revanced-cli/releases/latest | awk 'match($0, /v([0-9].*[0-9])/) {print substr($0, RSTART, RLENGTH)}' | awk -F'/' 'NR==1 {print $1}')
-	revanced_cli_version=${revanced_cli_version#v}
+	revanced_cli_version="$(Xem https://github.com/inotia00/revanced-cli | grep -m1 'inotia00/revanced-cli/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_cli : $revanced_cli_version${NC}"
 	## revanced patches
-	revanced_patches_version=$(curl -s -L https://github.com/revanced/revanced-patches/releases/latest | awk 'match($0, /v([0-9].*[0-9])/) {print substr($0, RSTART, RLENGTH)}' | awk -F'/' 'NR==1 {print $1}')
-	revanced_patches_version=${revanced_patches_version#v}
+	revanced_patches_version="$(Xem https://github.com/inotia00/revanced-patches | grep -m1 'inotia00/revanced-patches/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_patches : $revanced_patches_version${NC}"
 	## integrations
-	revanced_integrations_version=$(curl -s -L https://github.com/revanced/revanced-integrations/releases/latest | awk 'match($0, /v([0-9].*[0-9])/) {print substr($0, RSTART, RLENGTH)}' | awk -F'/' 'NR==1 {print $1}')
-	revanced_integrations_version=${revanced_integrations_version##v}
+	revanced_integrations_version="$(Xem https://github.com/inotia00/revanced-integrations | grep -m1 'inotia00/revanced-integrations/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_integrations : $revanced_integrations_version${NC}"
 }
+
 
 ## getting versions information
 get_latest_version_info
 
+if [ "$YTVERSION" == "Default" ];then
+YTVERSION="${youtubeVersion}"
+echo "VS=${youtubeVersion}" >> $GITHUB_ENV
+else
+echo "VS=$YTVERSION" >> $GITHUB_ENV
+fi
+
+echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
+echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
+echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
 
 # Wget download apk
 dl_apk() {
@@ -140,39 +177,6 @@ dl_yt() {
 		echo "Skipping YouTube..."
 	fi
 }
-
-# Download YouTube apks
-dl_ytapkm() {
-    rm -rf $2
-    echo "Downloading YouTube apks $1"
-    url="https://www.apkmirror.com/apk/google-inc/youtube/youtube-${1//./-}-release/"
-    url="$url$(req "$url" - | grep Variant -A50 | grep ">BUNDLE<" -A2 | grep android-apk-download | sed "s#.*-release/##g;s#/\#.*##g")"
-    url="https://www.apkmirror.com$(req "$url" - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
-    url="https://www.apkmirror.com$(req "$url" - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
-    req "$url" "$2"
-}
-
-# Cleanup
-find $CURDIR -type f -name *.apkm -exec rm -rf {} \;
-find $CURDIR -type f -name *.zip -exec rm -rf {} \;
-rm -rf $Likk/youtube && mkdir -p $Likk/yt
-
-dl_ytapkm $youtubeVersion yt/youtube.apkm
-
-sudo apt-get install p7zip-full -y
-echo Split youtube_arm64_v8a.apk
-7z e yt/youtube.apkm -oyt-arm64_v8a
-mkdir arm64
-mv yt-arm64_v8a/base.apk  yt-arm64_v8a/split_config.arm64_v8a.apk  yt-arm64_v8a/split_config.x*dpi.apk  arm64
-java -jar apks.jar m -i arm64 -o youtube_arm64_v8a.apk
-echo Split youtube_armeabi_v7a.apk
-7z e yt/youtube.apkm -oyt-armeabi_v7a
-mkdir arm
-mv yt-armeabi_v7a/base.apk  yt-armeabi_v7a/split_config.armeabi_v7a.apk  yt-armeabi_v7a/split_config.x*dpi.apk  arm
-java -jar apks.jar m -i arm -o youtube_armeabi_v7a.apk
-rm -r yt-arm64_v8a yt-armeabi_v7a yt arm64 arm
-echo done
-
 
 
 # Download YouTube Music
@@ -257,6 +261,9 @@ dl_twitter() {
 
 dl_tiktok() {
 	if [ "$tiktok" = 'yes' ]; then
+		tiktokVersion=$(curl -sL "https://api.github.com/repos/XDream8/revanced-creator/releases" | $grep -io "tiktok-[0-9].*[0-9]" | grep -o "[0-9].*[0-9]" | uniq | sort | awk 'END{print}')
+		out "${YELLOW}Tiktok version to be patched : $tiktokVersion${NC}"
+		
 		echo "Downloading Tiktok..."
 
 		local base_apk="tiktok.apk"
@@ -307,40 +314,18 @@ if [ "$youtube" = 'yes' ]; then
     echo "*     Building ReVanced      *"
     echo "************************************"
 
-    yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
+    yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e default-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
     yt_included_patches="-i theme -i force-premium-heading"
 
     echo "=== Building all APK ==="
     if [ -f "youtube.apk" ]; then
-        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
+        java -jar revanced-cli-ex.jar -m revanced-integrations-ex.apk -b revanced-patches-ex.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
                                 -a youtube.apk -o build/revanced-nonroot.apk
         apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-all.apk"
 	echo "ReEx-${youtubeVersion}-nonroot build finished"
     else
         echo "Cannot find YouTube arm APK, skipping build"
-    fi
-
-    echo "=== Building arm64 APK === "
-    if [ -f "youtube_arm64_v8a.apk" ]; then
-        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
-                                $yt_excluded_patches $yt_included_patches $common_included_patches \
-                                -a youtube_arm64_v8a.apk -o build/revanced_arm64_v8a-nonroot.apk
-        apksign "$Likk/build/revanced_arm64_v8a-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}_arm64_v8a-nonroot.apk"
-	echo "ReEx-${youtubeVersion}_arm64_v8a build finished"
-    else
-        echo "Cannot find YouTube arm64 APK, skipping build"
-    fi
-
-    echo "=== Building arm APK ==="
-    if [ -f "youtube_armeabi_v7a.apk" ]; then
-        java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
-                                $yt_excluded_patches $yt_included_patches $common_included_patches \
-                                -a youtube_armeabi_v7a.apk -o build/revanced_armeabi_v7a-nonroot.apk
-        apksign "$Likk/build/revanced_armeabi_v7a-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}_armeabi_v7a-nonroot.apk"
-	echo "ReEx-${youtubeVersion}_armeabi_v7a build finished"
-    else
-        echo "Cannot find YouTube x86 APK, skipping build"
     fi
 else
     echo "Skipping ReVanced build"
@@ -425,7 +410,9 @@ echo "************************************"
 if [ -f "tiktok.apk" ]
 then
     java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
-                               -a tiktok.apk -o upload/tiktok_${tiktokVersion}.apk
+                               -a tiktok.apk -o build/tiktok_${tiktokVersion}.apk
+        apksign "$Likk/build/tiktok_${tiktokVersion}.apk" "$Likk/upload/tiktok_${tiktokVersion}.apk"
+	echo "tiktok_${tiktokVersion}.apk build finished"
 else
    echo "Cannot find Reddit APK, skipping build"
 fi

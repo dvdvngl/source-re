@@ -13,9 +13,12 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3.3.0
         with:
-          java-version: "17"
-          distribution: "adopt"
-
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Update the system
+        run: sudo apt install curl ripgrep
+       
       - name: Build APK
         run: ./scripts/build.sh -y -k
               
