@@ -19,6 +19,20 @@ Likk="$GITHUB_WORKSPACE"
 apksign () { java -jar apksigner.jar sign --cert "testkey.x509.pem" --key "testkey.pk8" --out "$2" "$1"; }
 Xem () { curl -s -G -L -N -H "$User" --connect-timeout 20 "$1"; }
 
+
+notset() {
+	case $1 in '') return 0 ;; *) return 1 ;; esac
+}
+
+check_dep() {
+	if ! command -v "$1" >/dev/null; then
+		[ "$2" ] && out "${RED}$2${NC}"
+		return 1
+	else
+		return 0
+	fi
+}
+
 ## grep
 if notset "$grep" && check_dep "rg"; then
 	grep="rg"
