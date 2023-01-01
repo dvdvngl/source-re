@@ -74,7 +74,16 @@ youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk 
 musicVersion="5-24-50"
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
-tiktokVersion="27.2.5"
+
+
+## get stock apk_version
+tiktokVersion=$(curl -sL "https://api.github.com/repos/XDream8/revanced-creator/releases" | $grep -io "tiktok-[0-9].*[0-9]" | grep -o "[0-9].*[0-9]" | uniq | sort | awk 'END{print}')
+out "${YELLOW}Tiktok version to be patched : $tiktokVersion${NC}"
+
+
+
+
+
 
 declare -A apks
 
