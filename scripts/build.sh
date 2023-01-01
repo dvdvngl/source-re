@@ -97,11 +97,6 @@ twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
 
 
-## get stock apk_version
-tiktokVersion=$(curl -sL "https://api.github.com/repos/XDream8/revanced-creator/releases" | $grep -io "tiktok-[0-9].*[0-9]" | grep -o "[0-9].*[0-9]" | uniq | sort | awk 'END{print}')
-out "${YELLOW}Tiktok version to be patched : $tiktokVersion${NC}"
-
-
 
 
 
@@ -266,6 +261,9 @@ dl_twitter() {
 
 dl_tiktok() {
 	if [ "$tiktok" = 'yes' ]; then
+		tiktokVersion=$(curl -sL "https://api.github.com/repos/XDream8/revanced-creator/releases" | $grep -io "tiktok-[0-9].*[0-9]" | grep -o "[0-9].*[0-9]" | uniq | sort | awk 'END{print}')
+		out "${YELLOW}Tiktok version to be patched : $tiktokVersion${NC}"
+		
 		echo "Downloading Tiktok..."
 
 		local base_apk="tiktok.apk"
