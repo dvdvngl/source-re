@@ -17,6 +17,7 @@ NC='\033[0m'
 
 Likk="$GITHUB_WORKSPACE"
 apksign () { java -jar apksigner.jar sign --cert "testkey.x509.pem" --key "testkey.pk8" --out "$2" "$1"; }
+Xem () { curl -s -G -L -N -H "$User" --connect-timeout 20 "$1"; }
 
 out() {
 	# print a message
@@ -99,18 +100,15 @@ WGET_HEADER="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/2010010
 req() { wget -nv -O "$2" --header="$WGET_HEADER" "$1"; }
 
 get_latest_version_info() {
-	out "${BLUE}getting latest versions info"
+	out "${BLUE}getting latest versions info${NC}"
 	## revanced cli
-	revanced_cli_version=$(curl -s -L https://github.com/inotia00/revanced-cli/releases/latest | awk 'match($0, /v([0-9].*[0-9])/) {print substr($0, RSTART, RLENGTH)}' | awk -F'/' 'NR==1 {print $1}')
-	revanced_cli_version=${revanced_cli_version#v}
+	revanced_cli_version="$(Xem https://github.com/inotia00/revanced-cli | grep -m1 'inotia00/revanced-cli/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_cli : $revanced_cli_version${NC}"
 	## revanced patches
-	revanced_patches_version=$(curl -s -L https://github.com/inotia00/revanced-patches/releases/latest | awk 'match($0, /v([0-9].*[0-9])/) {print substr($0, RSTART, RLENGTH)}' | awk -F'/' 'NR==1 {print $1}')
-	revanced_patches_version=${revanced_patches_version#v}
+	revanced_patches_version="$(Xem https://github.com/inotia00/revanced-patches | grep -m1 'inotia00/revanced-patches/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_patches : $revanced_patches_version${NC}"
 	## integrations
-	revanced_integrations_version=$(curl -s -L https://github.com/inotia00/revanced-integrations/releases/latest | awk 'match($0, /v([0-9].*[0-9])/) {print substr($0, RSTART, RLENGTH)}' | awk -F'/' 'NR==1 {print $1}')
-	revanced_integrations_version=${revanced_integrations_version##v}
+	revanced_integrations_version="$(Xem https://github.com/inotia00/revanced-integrations | grep -m1 'inotia00/revanced-integrations/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_integrations : $revanced_integrations_version${NC}"
 }
 
@@ -277,7 +275,7 @@ if [ "$youtube" = 'yes' ]; then
     echo "*     Building ReVanced      *"
     echo "************************************"
 
-    yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
+    yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e default-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
     yt_included_patches="-i theme -i force-premium-heading"
 
     echo "=== Building all APK ==="
