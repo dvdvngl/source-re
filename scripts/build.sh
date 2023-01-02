@@ -262,7 +262,7 @@ dl_tiktok() {
 	if [ "$tiktok" = 'yes' ]; then
 		tiktokVersion=$(curl -sL "https://api.github.com/repos/XDream8/revanced-creator/releases" | $grep -io "tiktok-[0-9].*[0-9]" | grep -o "[0-9].*[0-9]" | uniq | sort | awk 'END{print}')
 		out "${YELLOW}Tiktok version to be patched : $tiktokVersion${NC}"
-		
+		echo "VST=${tiktokVersion}" >> $GITHUB_ENV
 		echo "Downloading Tiktok..."
 
 		local base_apk="tiktok.apk"
