@@ -436,13 +436,10 @@ fi
 echo "************************************"
 echo "Building Tiktok APK"
 echo "************************************"
-if [ -f "tiktok.apk" ]
-then
+if [ "$tiktok" = 'yes' ]; then
     patchs_revanced
     dl_patchs
     get_latest_version_info
-    youtubeVersion="$(java -jar revanced-cli.jar -a revanced-integrations.apk -b revanced-patches.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
-    echo "VS=${youtubeVersion}" >> $GITHUB_ENV
     echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
     echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
     echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
