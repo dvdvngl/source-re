@@ -175,8 +175,8 @@ dl_yt() {
 				
 		cp youtube.apk youtube-arm.apk
 		cp youtube.apk youtube-arm64.apk
-		7z d  youtube-arm64.apk -r lib/x86_64/ lib/x86/ lib/armeabi-v7a/
-		7z d  youtube-arm.apk -r lib/x86_64/ lib/x86/ lib/arm64-v8a/
+		7z d  youtube-arm64.apk -r lib/x86_64/ lib/x86/ lib/armeabi-v7a/ > nul
+		7z d  youtube-arm.apk -r lib/x86_64/ lib/x86/ lib/arm64-v8a/ > nul
 		fi
 	else
 		echo "Skipping YouTube..."
@@ -322,12 +322,23 @@ if [ "$youtube" = 'yes' ]; then
     yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e default-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
     yt_included_patches="-i theme -i force-premium-heading"
 
-    echo "=== Building all APK ==="
+    echo "=== Building arm APK ==="
     if [ -f "youtube-arm.apk" ]; then
         java -jar revanced-cli-ex.jar -m revanced-integrations-ex.apk -b revanced-patches-ex.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
-                                -a youtube-arm.apk -o build/revanced-nonroot.apk
-        apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-all.apk"
+                                -a youtube-arm.apk -o build/revanced-arm.apk
+        apksign "$Likk/build/revanced-arm.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-armeabi-v7a.apk"
+	echo "ReEx-${youtubeVersion}-nonroot build finished"
+    else
+        echo "Cannot find YouTube arm APK, skipping build"
+    fi
+    
+    echo "=== Building arm APK ==="
+    if [ -f "youtube-arm64.apk" ]; then
+        java -jar revanced-cli-ex.jar -m revanced-integrations-ex.apk -b revanced-patches-ex.jar \
+                                $yt_excluded_patches $yt_included_patches $common_included_patches \
+                                -a youtube-arm64.apk -o build/revanced-arm64.apk
+        apksign "$Likk/build/revanced-arm64.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-arm64-v8a.apk"
 	echo "ReEx-${youtubeVersion}-nonroot build finished"
     else
         echo "Cannot find YouTube arm APK, skipping build"
