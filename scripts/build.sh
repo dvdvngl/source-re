@@ -114,14 +114,14 @@ declare -A apks
 # YouTube Music builds for the following architectures are currently commented out as they don't appear to be building 
 # properly right now if these do end up getting fixed in the future and if there are people needing them I'll look into re-enabling them.
 
-apks["youtube.apk"]=dl_yt
+#apks["youtube.apk"]=dl_yt
 apks["music-arm.apk"]=dl_ytm_arm
 apks["music-arm64.apk"]=dl_ytm_arm64
 # apks["music-x86.apk"]=dl_ytm_x86
 # apks["music-x86_64.apk"]=dl_ytm_x86_64
 apks["twitter.apk"]=dl_twitter
 apks["reddit.apk"]=dl_reddit
-apks["tiktok.apk"]=dl_tiktok
+#apks["tiktok.apk"]=dl_tiktok
 
 
 ## Functions
@@ -330,6 +330,7 @@ if [ "$youtube" = 'yes' ]; then
     echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
     echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
     echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
+    dl_yt
 
     yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e default-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
     yt_included_patches="-i theme -i force-premium-heading"
@@ -445,6 +446,7 @@ then
     echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
     echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
     echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
+    dl_tiktok
     java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                -a tiktok.apk -o build/tiktok_${tiktokVersion}.apk
         apksign "$Likk/build/tiktok_${tiktokVersion}.apk" "$Likk/upload/tiktok_${tiktokVersion}.apk"
