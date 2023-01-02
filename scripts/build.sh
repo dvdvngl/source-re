@@ -60,6 +60,7 @@ export magiskYouTube="v17.33.42"
 export magiskMusic="v5.24.50"
 export magiskYouTube="v17.33.42"
 
+mkdir -p build upload
 
 # Artifacts associative array aka dictionary
 declare -A artifacts
@@ -299,8 +300,6 @@ for apk in "${!apks[@]}"; do
         ${apks[$apk]}
     fi
 done
-
-mkdir -p build upload
 
 # All patches will be included by default, you can exclude patches by appending -e patch-name to exclude said patch.
 # Example: -e microg-support
