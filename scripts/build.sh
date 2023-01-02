@@ -172,6 +172,11 @@ dl_yt() {
 			declare -r dl_url=$(dl_apk "https://www.apkmirror.com/apk/google-inc/youtube/youtube-${youtubeVersion}-release/" \
 				"APK</span>[^@]*@\([^#]*\)" \
 				"$base_apk")
+				
+		cp youtube.apk youtube-arm.apk
+		cp youtube.apk youtube-arm64.apk
+		7z d  youtube-arm64.apk -r lib/x86_64/ lib/x86/ lib/armeabi-v7a/
+		7z d  youtube-arm.apk -r lib/x86_64/ lib/x86/ lib/arm64-v8a/
 		fi
 	else
 		echo "Skipping YouTube..."
@@ -318,10 +323,10 @@ if [ "$youtube" = 'yes' ]; then
     yt_included_patches="-i theme -i force-premium-heading"
 
     echo "=== Building all APK ==="
-    if [ -f "youtube.apk" ]; then
+    if [ -f "youtube-arm.apk" ]; then
         java -jar revanced-cli-ex.jar -m revanced-integrations-ex.apk -b revanced-patches-ex.jar \
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
-                                -a youtube.apk -o build/revanced-nonroot.apk
+                                -a youtube-arm.apk -o build/revanced-nonroot.apk
         apksign "$Likk/build/revanced-nonroot.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-all.apk"
 	echo "ReEx-${youtubeVersion}-nonroot build finished"
     else
