@@ -100,9 +100,6 @@ dl_patchs () {
 
 # Download the following apk's from APKmirror
 
-
-
-youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
 musicVersion="5-24-50"
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
@@ -138,6 +135,18 @@ req() { wget -nv -O "$2" --header="$WGET_HEADER" "$1"; }
 get_latest_version_info() {
 	out "${BLUE}getting latest versions info${NC}"
 	## revanced cli
+	revanced_cli_version="$(Xem https://github.com/revanced/revanced-cli | grep -m1 'revanced/revanced-cli/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
+	out "${YELLOW}revanced_cli : $revanced_cli_version${NC}"
+	## revanced patches
+	revanced_patches_version="$(Xem https://github.com/revanced/revanced-patches | grep -m1 'revanced/revanced-patches/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
+	out "${YELLOW}revanced_patches : $revanced_patches_version${NC}"
+	## integrations
+	revanced_integrations_version="$(Xem https://github.com/revanced/revanced-integrations | grep -m1 'revanced/revanced-integrations/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
+	out "${YELLOW}revanced_integrations : $revanced_integrations_version${NC}"
+}
+get_ex_latest_version_info() {
+	out "${BLUE}getting latest versions info${NC}"
+	## revanced cli
 	revanced_cli_version="$(Xem https://github.com/inotia00/revanced-cli | grep -m1 'inotia00/revanced-cli/releases/tag' | sed 's|v||g' | tr "/" "\n" | grep -m1 '\">' | cut -d \" -f1)"
 	out "${YELLOW}revanced_cli : $revanced_cli_version${NC}"
 	## revanced patches
@@ -148,14 +157,6 @@ get_latest_version_info() {
 	out "${YELLOW}revanced_integrations : $revanced_integrations_version${NC}"
 }
 
-
-## getting versions information
-get_latest_version_info
-
-echo "VS=${youtubeVersion}" >> $GITHUB_ENV
-echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
-echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
-echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
 
 # Wget download apk
 dl_apk() {
@@ -323,6 +324,12 @@ if [ "$youtube" = 'yes' ]; then
     echo "************************************"
     patchs_revanced_ex
     dl_patchs
+    get_ex_latest_version_info
+    youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
+    echo "VS=${youtubeVersion}" >> $GITHUB_ENV
+    echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
+    echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
+    echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
 
     yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e default-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
     yt_included_patches="-i theme -i force-premium-heading"
@@ -432,6 +439,12 @@ if [ -f "tiktok.apk" ]
 then
     patchs_revanced
     dl_patchs
+    get_latest_version_info
+    youtubeVersion="$(java -jar revanced-cli.jar -a revanced-integrations.apk -b revanced-patches.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
+    echo "VS=${youtubeVersion}" >> $GITHUB_ENV
+    echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
+    echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
+    echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
     java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                -a tiktok.apk -o build/tiktok_${tiktokVersion}.apk
         apksign "$Likk/build/tiktok_${tiktokVersion}.apk" "$Likk/upload/tiktok_${tiktokVersion}.apk"
