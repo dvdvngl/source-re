@@ -17,7 +17,7 @@ jobs:
           java-version: '17'
           
       - name: Update the system
-        run: sudo apt install curl ripgrep p7zip-full p7zip-rar
+        run: sudo apt install curl ripgrep
        
       - name: Build APK
         run: ./scripts/build.sh -y -k
