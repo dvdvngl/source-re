@@ -64,14 +64,20 @@ mkdir -p build upload
 
 # Artifacts associative array aka dictionary
 declare -A artifacts
-
-artifacts["revanced-cli.jar"]="revanced/revanced-cli revanced-cli .jar"
-artifacts["revanced-integrations.apk"]="revanced/revanced-integrations revanced-integrations .apk"
-artifacts["revanced-patches.jar"]="revanced/revanced-patches revanced-patches .jar"
-artifacts["revanced-cli-ex.jar"]="inotia00/revanced-cli revanced-cli .jar"
-artifacts["revanced-integrations-ex.apk"]="inotia00/revanced-integrations app-release-unsigned .apk"
-artifacts["revanced-patches-ex.jar"]="inotia00/revanced-patches revanced-patches .jar"
-artifacts["microg.apk"]="inotia00/VancedMicroG microg.apk"
+# Download from revanced extended
+patchs_revanced_ex () {
+	artifacts["revanced-cli-ex.jar"]="inotia00/revanced-cli revanced-cli .jar"
+	artifacts["revanced-integrations-ex.apk"]="inotia00/revanced-integrations app-release-unsigned .apk"
+	artifacts["revanced-patches-ex.jar"]="inotia00/revanced-patches revanced-patches .jar"
+	artifacts["microg.apk"]="inotia00/VancedMicroG microg.apk"
+}
+# Download from revanced
+patchs_revanced () {
+	artifacts["revanced-cli.jar"]="revanced/revanced-cli revanced-cli .jar"
+	artifacts["revanced-integrations.apk"]="revanced/revanced-integrations revanced-integrations .apk"
+	artifacts["revanced-patches.jar"]="revanced/revanced-patches revanced-patches .jar"
+	artifacts["microg.apk"]="inotia00/VancedMicroG microg.apk"
+}
 
 get_artifact_download_url () {
     # Usage: get_download_url <repo_name> <artifact_name> <file_type>
@@ -81,12 +87,15 @@ get_artifact_download_url () {
 }
 
 # Fetch all the dependencies
-for artifact in "${!artifacts[@]}"; do
-    if [ ! -f $artifact ]; then
-        echo "Downloading $artifact"
-        curl -L -o $artifact $(get_artifact_download_url ${artifacts[$artifact]})
-    fi
-done
+dl_patchs () {
+	for artifact in "${!artifacts[@]}"; do
+	    if [ ! -f $artifact ]; then
+	        echo "Downloading $artifact"
+	        curl -L -o $artifact $(get_artifact_download_url ${artifacts[$artifact]})
+	    fi
+	done
+}
+
 
 
 # Download the following apk's from APKmirror
@@ -312,6 +321,8 @@ if [ "$youtube" = 'yes' ]; then
     echo "************************************"
     echo "*     Building ReVanced      *"
     echo "************************************"
+    patchs_revanced_ex
+    dl_patchs
 
     yt_excluded_patches="-e custom-branding-icon-afn-blue -e custom-branding-icon-afn-red -e custom-branding-name -e custom-branding-icon-revancify -e custom-video-buffer -e custom-video-speed -e default-video-speed -e disable-haptic-feedback -e enable-hdr-auto-brightness -e enable-old-layout -e enable-old-seekbar-color -e enable-seekbar-tapping -e enable-tablet-miniplayer -e enable-wide-searchbar -e header-switch -e hide-auto-player-popup-panels -e hide-autoplay-button -e hide-comment-component -e hide-crowdfunding-box -e hide-email-address -e hide-filmstrip-overlay -e hide-flyout-panel -e hide-fullscreen-buttoncontainer -e hide-info-cards -e hide-pip-notification -e hide-player-captions-button -e hide-player-overlay-filter -e hide-stories -e hide-suggested-actions -e hide-time-and-seekbar -e layout-switch -e remove-player-button-background -e return-youtube-dislike -e swipe-controls"
     yt_included_patches="-i theme -i force-premium-heading"
@@ -419,6 +430,8 @@ echo "Building Tiktok APK"
 echo "************************************"
 if [ -f "tiktok.apk" ]
 then
+    patchs_revanced
+    dl_patchs
     java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                -a tiktok.apk -o build/tiktok_${tiktokVersion}.apk
         apksign "$Likk/build/tiktok_${tiktokVersion}.apk" "$Likk/upload/tiktok_${tiktokVersion}.apk"
