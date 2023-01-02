@@ -65,7 +65,7 @@ export magiskYouTube="v17.33.42"
 declare -A artifacts
 
 artifacts["revanced-cli.jar"]="revanced/revanced-cli revanced-cli .jar"
-artifacts["revanced-integrations.apk"]="revanced/revanced-integrations app-release-unsigned .apk"
+artifacts["revanced-integrations.apk"]="revanced/revanced-integrations revanced-integrations .apk"
 artifacts["revanced-patches.jar"]="revanced/revanced-patches revanced-patches .jar"
 artifacts["revanced-cli-ex.jar"]="inotia00/revanced-cli revanced-cli .jar"
 artifacts["revanced-integrations-ex.apk"]="inotia00/revanced-integrations app-release-unsigned .apk"
@@ -328,7 +328,7 @@ if [ "$youtube" = 'yes' ]; then
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
                                 -a youtube-arm.apk -o build/revanced-arm.apk
         apksign "$Likk/build/revanced-arm.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-armeabi-v7a.apk"
-	echo "ReEx-${youtubeVersion}-nonroot build finished"
+	echo "ReEx-${youtubeVersion}-nonroot armeabi-v7a build finished"
     else
         echo "Cannot find YouTube arm APK, skipping build"
     fi
@@ -339,7 +339,7 @@ if [ "$youtube" = 'yes' ]; then
                                 $yt_excluded_patches $yt_included_patches $common_included_patches \
                                 -a youtube-arm64.apk -o build/revanced-arm64.apk
         apksign "$Likk/build/revanced-arm64.apk" "$Likk/upload/ReEx-${youtubeVersion}-nonroot-arm64-v8a.apk"
-	echo "ReEx-${youtubeVersion}-nonroot build finished"
+	echo "ReEx-${youtubeVersion}-nonroot arm64-v8a build finished"
     else
         echo "Cannot find YouTube arm APK, skipping build"
     fi
