@@ -70,7 +70,7 @@ artifacts["revanced-patches.jar"]="revanced/revanced-patches revanced-patches .j
 artifacts["revanced-cli-ex.jar"]="inotia00/revanced-cli revanced-cli .jar"
 artifacts["revanced-integrations-ex.apk"]="inotia00/revanced-integrations app-release-unsigned .apk"
 artifacts["revanced-patches-ex.jar"]="inotia00/revanced-patches revanced-patches .jar"
-artifacts["$Likk/upload/microg.apk"]="inotia00/VancedMicroG microg.apk"
+artifacts["upload/microg.apk"]="inotia00/VancedMicroG microg.apk"
 
 get_artifact_download_url () {
     # Usage: get_download_url <repo_name> <artifact_name> <file_type>
