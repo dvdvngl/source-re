@@ -172,6 +172,9 @@ dl_apk() {
 dl_yt() {
 	if [ "$youtube" = 'yes' ]; then
 		echo "Downloading YouTube..."
+		youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
+		out "${YELLOW}YouTube version to be patched : $youtubeVersion${NC}"
+		echo "VS=${youtubeVersion}" >> $GITHUB_ENV
 
 		local base_apk="youtube.apk"
 		if [ ! -f "$base_apk" ]; then
@@ -325,8 +328,6 @@ if [ "$youtube" = 'yes' ]; then
     patchs_revanced_ex
     dl_patchs
     get_ex_latest_version_info
-    youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions 2>/dev/null | grep -m1 hide-create-button | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
-    echo "VS=${youtubeVersion}" >> $GITHUB_ENV
     echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
     echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
     echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
