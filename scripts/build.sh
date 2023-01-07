@@ -171,8 +171,8 @@ dl_apk() {
 # Download YouTube
 dl_yt() {
 	if [ "$youtube" = 'yes' ]; then
-		youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions)"
-		out "${YELLOW}YouTube version to be patched : $youtubeVersion${NC}"
+		youtubeVersion="$(java -jar revanced-cli-ex.jar -a revanced-integrations-ex.apk -b revanced-patches-ex.jar -l --with-versions 2>/dev/null | grep -m1 video-ads | tr '	' '\n' | tac | head -n 1 | awk '{print $1}')"
+		out "YouTube version to be patched : $youtubeVersion"
 		echo "VS=${youtubeVersion}" >> $GITHUB_ENV
 		echo "Downloading YouTube..."
 		
