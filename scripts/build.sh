@@ -172,7 +172,7 @@ dl_apk() {
 dl_yt() {
 	if [ "$youtube" = 'yes' ]; then
 		curl -X 'GET' \
-		    'https://releases.rvcd.win/patches' \
+		    'https://raw.githubusercontent.com/inotia00/revanced-patches/main/patches.json' \
 		    -H 'accept: application/json' \
 		    -o revanced-patches.json
 		youtubeVersion=$(jq -r '.[] | select(.name == "video-ads") | .compatiblePackages[] | select(.name == "com.google.android.youtube") | .versions[-1]' revanced-patches.json)
