@@ -172,10 +172,10 @@ dl_apk() {
 dl_yt() {
 	if [ "$youtube" = 'yes' ]; then
 		curl -X 'GET' \
-		    'https://raw.githubusercontent.com/inotia00/revanced-patches/main/patches.json' \
+		    'https://raw.githubusercontent.com/inotia00/revanced-patches/revanced-extended/patches.json' \
 		    -H 'accept: application/json' \
 		    -o revanced-patches.json
-		youtubeVersion=$(jq -r '.[] | select(.name == "video-ads") | .compatiblePackages[] | select(.name == "com.google.android.youtube") | .versions[-1]' revanced-patches.json)
+		youtubeVersion=$(jq -r '.[] | select(.name == "hide-shorts-button") | .compatiblePackages[] | select(.name == "com.google.android.youtube") | .versions[-1]' revanced-patches.json)
 		rm -rf revanced-patches.json
 
 		out "${YELLOW}YouTube version to be patched : $youtubeVersion${NC}"
