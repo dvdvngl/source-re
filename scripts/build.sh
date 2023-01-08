@@ -100,13 +100,29 @@ dl_patchs () {
 
 # Download the following apk's from APKmirror
 
-musicVersion="5-24-50"
+
 twitterVersion="9-58-1-release-1"
 redditVersion="2022-34-0"
 
+ver_ytb() {
+	curl -X 'GET' \
+	    'https://raw.githubusercontent.com/inotia00/revanced-patches/revanced-extended/patches.json' \
+	    -H 'accept: application/json' \
+	    -o revanced-patches.json
+	youtubeVersion=$(jq -r '.[] | select(.name == "hide-shorts-button") | .compatiblePackages[] | select(.name == "com.google.android.youtube") | .versions[-1]' revanced-patches.json)
+	out "${YELLOW}YouTube version to be patched : $youtubeVersion${NC}"
+	rm -rf revanced-patches.json
+}
 
-
-
+ver_music() {
+	curl -X 'GET' \
+	    'https://raw.githubusercontent.com/revanced/revanced-patches/main/patches.json' \
+	    -H 'accept: application/json' \
+	    -o revanced-patches.json
+	musicVersion=$(jq -r '.[] | select(.name == "minimized-playback-music") | .compatiblePackages[] | select(.name == "com.google.android.apps.youtube.music") | .versions[-1]' revanced-patches.json)
+	out "${YELLOW}YouTube Music version to be patched : $musicVersion${NC}"
+	rm -rf revanced-patches.json
+}
 
 
 declare -A apks
@@ -171,14 +187,9 @@ dl_apk() {
 # Download YouTube
 dl_yt() {
 	if [ "$youtube" = 'yes' ]; then
-		curl -X 'GET' \
-		    'https://raw.githubusercontent.com/inotia00/revanced-patches/revanced-extended/patches.json' \
-		    -H 'accept: application/json' \
-		    -o revanced-patches.json
-		youtubeVersion=$(jq -r '.[] | select(.name == "hide-shorts-button") | .compatiblePackages[] | select(.name == "com.google.android.youtube") | .versions[-1]' revanced-patches.json)
-		rm -rf revanced-patches.json
 
-		out "${YELLOW}YouTube version to be patched : $youtubeVersion${NC}"
+		ver_ytb
+
 		echo "VS=${youtubeVersion}" >> $GITHUB_ENV
 		echo "Downloading YouTube..."
 		
@@ -202,8 +213,14 @@ dl_yt() {
 # Download YouTube Music
 dl_ytm_arm() {
 	if [ "$music" = 'yes' ]; then
+		patchs_revanced
+		dl_patchs
+		get_latest_version_info
+		echo "VS_PATCHES=$revanced_patches_version" >> $GITHUB_ENV
+		echo "VS_CLI=$revanced_cli_version" >> $GITHUB_ENV
+		echo "VS_INTERGAITIONS=$revanced_integrations_version" >> $GITHUB_ENV
+        ver_music
 		echo "Downloading YouTube Music arm..."
-
 		local base_apk="music-arm.apk"
 		if [ ! -f "$base_apk" ]; then
 			local regexp_arch='armeabi-v7a</div>[^@]*@\([^"]*\)'
@@ -218,8 +235,8 @@ dl_ytm_arm() {
 
 dl_ytm_arm64() {
 	if [ "$music" = 'yes' ]; then
+        ver_music
 		echo "Downloading YouTube Music arm64..."
-
 		local base_apk="music-arm64.apk"
 		if [ ! -f "$base_apk" ]; then
 			local regexp_arch='arm64-v8a</div>[^@]*@\([^"]*\)'
@@ -378,7 +395,8 @@ if [ "$music" = 'yes' ]; then
     if [ -f "music-arm.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $ytm_excluded_patches $common_included_patches \
-                                -a music-arm.apk -o upload/revanced-music-nonroot-arm.apk
+                                -a music-arm.apk -o build/revanced-music-nonroot-arm.apk
+        apksign "$Likk/build/revanced-music-nonroot-arm.apk" "$Likk/upload/revanced-music_${musicVersion}_nonroot-arm.apk"
         echo "ReVanced Music arm build finished"
     else
         echo "Cannot find YouTube Music arm APK, skipping build"
@@ -388,7 +406,8 @@ if [ "$music" = 'yes' ]; then
     if [ -f "music-arm64.apk" ]; then
         java -jar revanced-cli.jar -m revanced-integrations.apk -b revanced-patches.jar \
                                 $ytm_excluded_patches \
-                                -a music-arm64.apk -o upload/revanced-music-nonroot-arm64.apk
+                                -a music-arm64.apk -o build/revanced-music-nonroot-arm64.apk
+        apksign "$Likk/build/revanced-music-nonroot-arm64.apk" "$Likk/upload/revanced-music_${musicVersion}_nonroot-arm64.apk"
         echo "ReVanced Music arm64 build finished"
     else
         echo "Cannot find YouTube Music arm64 APK, skipping build"
